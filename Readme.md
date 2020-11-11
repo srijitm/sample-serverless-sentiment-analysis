@@ -18,22 +18,22 @@ This project will build a serverless sentiment analyzer leveraging Amazon Compre
 
 ## Instructions
 
-* Update deploy.sh
+1. Update deploy.sh
 
-```bash
-S3_BUCKET='my-playpen' # This bucket needs to exist in your AWS account
-```
+  ```bash
+  S3_BUCKET='my-playpen' # This bucket needs to exist in your AWS account
+  ```
 
-* Run deploy.sh
+2. Run deploy.sh
 
-```bash
-$ ./deploy.sh
-```
+  ```bash
+  $ ./deploy.sh
+  ```
 
 ## Testing
-* Log on to AWS Console and browse to SQS.
-* Select the sentiment-analyzer-queue
-* Submit the following sample messages:
+1. Log on to AWS Console and browse to SQS.
+2. Select the sentiment-analyzer-queue
+3. Submit the following sample messages:
 
   *Positive*:
   ```
@@ -62,8 +62,7 @@ $ ./deploy.sh
   }
   ```
 
-* Browse to DynamoDB and select the sentiments-table to see the results.
-
+4. Browse to DynamoDB and select the sentiments-table to see the results.
 
 ## Improvements
 
