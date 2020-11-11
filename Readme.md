@@ -32,7 +32,7 @@ This project will build a serverless sentiment analyzer leveraging Amazon Compre
 
 ## Testing
 1. Log on to AWS Console and browse to SQS.
-2. Select the sentiment-analyzer-queue
+2. Select the sentiment-analyzer-queue and click on Send and receieve messages (button, top right)
 3. Submit the following sample messages:
 
   *Positive*:
@@ -63,6 +63,7 @@ This project will build a serverless sentiment analyzer leveraging Amazon Compre
   ```
 
 4. Browse to DynamoDB and select the sentiments-table to see the results.
+5. You will see that the first message (Positive) is not in the database. That is because an user can only submit one review per product. Try submitting the positive review again to see what happens.
 
 ## Improvements
 
