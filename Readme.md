@@ -68,3 +68,4 @@ This project will build a serverless sentiment analyzer leveraging Amazon Compre
 ## Improvements
 
 * Update the Lambda function to use the batch versions of the comprehend calls to lower costs and improve performance.
+* Create secondary indexes on user_id to retrieve all reviews submitted by a specific user
