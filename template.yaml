@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Analyzing sentiment from reviews using AWS Comprehend
+
+Resources:
+  SentimentAnalyzerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: sentiment-analyzer
+      Handler: src/SentimentAnalysis.lambda_handler
+      Runtime: python3.8
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SqsQueue.Arn
+            BatchSize: 10
+      Policies:
+      - SQSPollerPolicy:
+          QueueName:
+            !GetAtt SqsQueue.QueueName
+      - ComprehendReadOnly
+      - AmazonDynamoDBFullAccess
+      
+  SqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: sentiment-analyzer-queue
+  
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: sentiments-table
+      AttributeDefinitions: 
+        - AttributeName: product_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: product_id
+          KeyType: HASH
+        - AttributeName: user_id
+          KeyType: RANGE
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
