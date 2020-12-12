@@ -3,6 +3,12 @@ Transform: AWS::Serverless-2016-10-31
 Description: Analyzing sentiment from reviews using AWS Comprehend
 
 Resources:
+
+  SqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: sentiment-analyzer-queue
+
   SentimentAnalyzerFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -34,12 +40,13 @@ Resources:
           Properties:
             Path: /sentiment
             Method: post
+      Environment:
+        Variables:
+          queueName: !Ref SqsQueue
+      Policies:
+        SQSSendMessagePolicy:
+          QueueName: !GetAtt SqsQueue.QueueName
 
-  SqsQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: sentiment-analyzer-queue
-  
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties: 
