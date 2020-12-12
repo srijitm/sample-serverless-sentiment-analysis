@@ -21,7 +21,20 @@ Resources:
             !GetAtt SqsQueue.QueueName
       - ComprehendReadOnly
       - AmazonDynamoDBFullAccess
-      
+
+  CreateSentimentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: create_sentiment.lambda_handler
+      Runtime: python3.8
+      Events:
+        CreateSentiment:
+          Type: Api
+          Properties:
+            Path: /sentiment
+            Method: post
+
   SqsQueue:
     Type: AWS::SQS::Queue
     Properties:
