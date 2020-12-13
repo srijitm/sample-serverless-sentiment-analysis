@@ -7,12 +7,12 @@ This project will build a serverless sentiment analyzer leveraging Amazon Compre
 The user needs to post a review to an endpoint (POST /sentiments), this endpoint pushes the data to a queue.
 Data in the queue is processed by a lambda function, this function calls Amazon Comprehend to analyze the sentiment. Once the analysis is completed, results are save in an Amazon DynamoDB Table. 
 
-Diagram 1
+![](diagrams/diagram1.png) 
 
 
 Sentiments can later be retrieved by calling GET /sentiments.
 
-Diagram 2
+![](diagrams/diagram2.png) 
 
 
 ## AWS Services
@@ -41,10 +41,22 @@ Diagram 2
   $ ./deploy.sh
   ```
 
+Take note of the output of this command as you will need the URLs mentioned there. See example bellow
+
+```
+Key                 CreateSentimentFunction                                                                                                            
+Description         API Gateway endpoint URL for Prod stage for Create Sentiment                                                                       
+Value               POST https://sev3nndf0g.execute-api.ca-central-1.amazonaws.com/Prod/sentiments/                                                    
+
+Key                 GetSentimentsFunction                                                                                                              
+Description         API Gateway endpoint URL for Prod stage for GET Sentiments                                                                         
+Value               GET https://sev3nndf0g.execute-api.ca-central-1.amazonaws.com/Prod/sentiments/     
+```
+
+URL is exactly the same, what varies is the Method.
+
 ## Testing
-1. Log on to AWS Console and browse to SQS.
-2. Select the sentiment-analyzer-queue and click on Send and receieve messages (button, top right)
-3. Submit the following sample messages:
+1. Make a POST request to /sentiments using the URL provided and one of the sample messages mentioned bellow.
 
   *Positive*:
   ```
@@ -72,9 +84,7 @@ Diagram 2
   "review": "Device works. Build quality is quite poor but expected for the price."
   }
   ```
-
-4. Browse to DynamoDB and select the sentiments-table to see the results.
-5. You will see that the first message (Positive) is not in the database. That is because an user can only submit one review per product. Try submitting the positive review again to see what happens.
+2. Make a GET request to /sentiments using the URL provided to see records stored in DynamoDB Table.
 
 ## Improvements
 
