@@ -3,11 +3,17 @@ Transform: AWS::Serverless-2016-10-31
 Description: Analyzing sentiment from reviews using AWS Comprehend
 
 Resources:
+
+  SqsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: sentiment-analyzer-queue
+
   SentimentAnalyzerFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: sentiment-analyzer
-      Handler: src/SentimentAnalysis.lambda_handler
+      Handler: src/sentiment_analysis.lambda_handler
       Runtime: python3.8
       Events:
         MySQSEvent:
@@ -15,18 +21,54 @@ Resources:
           Properties:
             Queue: !GetAtt SqsQueue.Arn
             BatchSize: 10
+      Environment:
+        Variables:
+          tableName: !Ref DynamoDBTable
       Policies:
       - SQSPollerPolicy:
           QueueName:
             !GetAtt SqsQueue.QueueName
       - ComprehendReadOnly
       - AmazonDynamoDBFullAccess
-      
-  SqsQueue:
-    Type: AWS::SQS::Queue
+
+  CreateSentimentFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      QueueName: sentiment-analyzer-queue
-  
+      CodeUri: src/
+      Handler: create_sentiment.lambda_handler
+      Runtime: python3.8
+      Events:
+        CreateSentiment:
+          Type: Api
+          Properties:
+            Path: /sentiments
+            Method: post
+      Environment:
+        Variables:
+          queueName: !Ref SqsQueue
+      Policies:
+        SQSSendMessagePolicy:
+          QueueName: !GetAtt SqsQueue.QueueName
+
+  GetSentimentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: get_sentiments.lambda_handler
+      Runtime: python3.8
+      Events:
+        CreateSentiment:
+          Type: Api
+          Properties:
+            Path: /sentiments
+            Method: get
+      Environment:
+        Variables:
+          tableName: !Ref DynamoDBTable
+      Policies:
+        DynamoDBReadPolicy:
+          TableName: !Ref DynamoDBTable
+
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties: 
@@ -44,3 +86,12 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+Outputs:
+  CreateSentimentFunction:
+    Description: "API Gateway endpoint URL for Prod stage for Create Sentiment"
+    Value: !Sub "POST https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sentiments/"
+
+  GetSentimentsFunction:
+    Description: "API Gateway endpoint URL for Prod stage for GET Sentiments"
+    Value: !Sub "GET https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sentiments/"

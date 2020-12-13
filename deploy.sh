@@ -1,6 +1,6 @@
 #! /bin/bash
 
-S3_BUCKET='my-playpen'
+S3_BUCKET='gmansilla-sentiment'
 STACK_NAME='sentiment-analyzer'
 
 sam build

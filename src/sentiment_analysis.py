@@ -1,6 +1,7 @@
 import boto3
 import logging
 import json
+import os
 from operator import itemgetter
 
 log = logging.getLogger()
@@ -8,7 +9,7 @@ log.setLevel(logging.DEBUG)
 
 cmp = boto3.client('comprehend')
 ddb = boto3.resource('dynamodb')
-table = ddb.Table('sentiments-table')
+table = ddb.Table(os.environ['tableName'])
 
 def detect_language(review):
   response = cmp.detect_dominant_language(
