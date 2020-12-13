@@ -86,3 +86,12 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+Outputs:
+  CreateSentimentFunction:
+    Description: "API Gateway endpoint URL for Prod stage for Create Sentiment"
+    Value: !Sub "POST https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sentiments/"
+
+  GetSentimentsFunction:
+    Description: "API Gateway endpoint URL for Prod stage for GET Sentiments"
+    Value: !Sub "GET https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sentiments/"
