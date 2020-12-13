@@ -2,12 +2,13 @@ import boto3
 import os
 import json
 
+sqs_client = boto3.client('sqs')
+queue_name = os.environ['queueName']
+
 
 def lambda_handler(event, context):
     """Main Handler: gets event data and pushes it to SQS"""
     try:
-        sqs_client = boto3.client('sqs')
-        queue_name = os.environ['queueName']
         body = json.loads(json.dumps(event['body']))
         result = sqs_client.send_message(QueueUrl=queue_name, MessageBody=body)
         if result.get('Failed'):

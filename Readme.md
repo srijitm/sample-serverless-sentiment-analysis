@@ -3,7 +3,17 @@
 
 ## Description
 
-This project will build a serverless sentiment analyzer leveraging Amazon Comprehend's natural language processing (NLP) capabilities. The user needs to submit jobs to a queue which will trigger the rest of the workflow.
+This project will build a serverless sentiment analyzer leveraging Amazon Comprehend's natural language processing (NLP) capabilities. 
+The user needs to post a review to an endpoint (POST /sentiments), this endpoint pushes the data to a queue.
+Data in the queue is processed by a lambda function, this function calls Amazon Comprehend to analyze the sentiment. Once the analysis is completed, results are save in an Amazon DynamoDB Table. 
+
+Diagram 1
+
+
+Sentiments can later be retrieved by calling GET /sentiments.
+
+Diagram 2
+
 
 ## AWS Services
 
@@ -11,6 +21,7 @@ This project will build a serverless sentiment analyzer leveraging Amazon Compre
 * Amazon Comprehend
 * Amazon DynamoDB
 * Amazon SQS
+* Amazon API Gateway
 
 ## Pre-Requisites
 

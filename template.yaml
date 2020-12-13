@@ -13,7 +13,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: sentiment-analyzer
-      Handler: src/SentimentAnalysis.lambda_handler
+      Handler: src/sentiment_analysis.lambda_handler
       Runtime: python3.8
       Events:
         MySQSEvent:
@@ -21,6 +21,9 @@ Resources:
           Properties:
             Queue: !GetAtt SqsQueue.Arn
             BatchSize: 10
+      Environment:
+        Variables:
+          tableName: !Ref DynamoDBTable
       Policies:
       - SQSPollerPolicy:
           QueueName:
