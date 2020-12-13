@@ -38,7 +38,7 @@ Resources:
         CreateSentiment:
           Type: Api
           Properties:
-            Path: /sentiment
+            Path: /sentiments
             Method: post
       Environment:
         Variables:
@@ -46,6 +46,25 @@ Resources:
       Policies:
         SQSSendMessagePolicy:
           QueueName: !GetAtt SqsQueue.QueueName
+
+  GetSentimentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: get_sentiments.lambda_handler
+      Runtime: python3.8
+      Events:
+        CreateSentiment:
+          Type: Api
+          Properties:
+            Path: /sentiments
+            Method: get
+      Environment:
+        Variables:
+          tableName: !Ref DynamoDBTable
+      Policies:
+        DynamoDBReadPolicy:
+          TableName: !Ref DynamoDBTable
 
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
